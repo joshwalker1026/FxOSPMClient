@@ -298,8 +298,8 @@ var SideBar = React.createClass({
   render: function() {
     return (
 	  <Nav bsStyle='pills' stacked activeKey={1} className="navbar-default sidebar">
-	    <NavItem eventKey={1} title='Dashboard' href='/#/dashboard'><Glyphicon glyph='dashboard'/> Dashboard </NavItem>
-	    <NavItem eventKey={2} title='Projects' href='/project'><Glyphicon glyph='th-large'/> Projects </NavItem>
+	    <NavItem eventKey={1} title='Dashboard' href='./index.html#/dashboard'><Glyphicon glyph='dashboard'/> Dashboard </NavItem>
+	    <NavItem eventKey={2} title='Projects' href='./index.html#/project'><Glyphicon glyph='th-large'/> Projects </NavItem>
 	    {/*<NavItem eventKey={3} >NavItem 3 content</NavItem>*/}
 	  </Nav>
 
