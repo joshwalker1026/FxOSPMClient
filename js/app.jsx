@@ -614,7 +614,7 @@ var ProjectBreakdown = React.createClass({
 
 var routes = (
   <Route name="app" path="/" handler={App}>
-    <DefaultRoute handler={ProjectBreakdown}/>
+    <DefaultRoute handler={DashboardView}/>
     <Route name="dashboard"          path="/dashboard" handler={DashboardView}/>
     <Route name="project"            path="/project" handler={ProjectBreakdown}/>
     <Route name="project_create"     path="/project/create" handler={ProjectCreate}/>
