@@ -1,7 +1,8 @@
 var config = {
   bugBaseUrl: "https://bugzilla.mozilla.org/rest",
   prjBaseUrl: "http://localhost:8080/api/v1",
-  
+  bugLinkUrl: "https://bugzilla.mozilla.org/buglist.cgi?quicksearch=",
+
   releases: ["1.3", "1.3T", "1.4", "2.0", "2.0M", "2.1", "2.2", "3.0"], // which releases to show
   featureReleases: ["2.1", "2.2?", "2.2+", "3.0?", "3.0+"], // for feature-b2g transition. 
   flag: "cf_blocking_b2g", // name of the release flag to use

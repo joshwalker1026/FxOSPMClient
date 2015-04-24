@@ -291,108 +291,23 @@ var NavUser = React.createClass({
 });
 
 var SideBar = React.createClass({
+
+  getInitialState: function(){
+
+  	return {selected: 'dashboard'};
+  },
+
   handleSelect: function() {
-    
+  
+    setState({selected: 'project'})
   },  
 
   render: function() {
     return (
-	  <Nav bsStyle='pills' stacked activeKey={1} className="navbar-default sidebar">
-	    <NavItem eventKey={1} title='Dashboard' href='./index.html#/dashboard'><Glyphicon glyph='dashboard'/> Dashboard </NavItem>
-	    <NavItem eventKey={2} title='Projects' href='./index.html#/project'><Glyphicon glyph='th-large'/> Projects </NavItem>
-	    {/*<NavItem eventKey={3} >NavItem 3 content</NavItem>*/}
+	  <Nav bsStyle='pills' stacked className="navbar-default sidebar">
+	    <NavItem eventKey={1} title='Dashboard' href='./index.html#'><Glyphicon glyph='dashboard'/> Dashboard </NavItem>
+	    {/*<NavItem eventKey={2} title='Projects' href='./index.html#/project'><Glyphicon glyph='th-large'/> Projects </NavItem>*/}
 	  </Nav>
-
-
-     //    <div className="navbar-default sidebar" role="navigation">
-     //      <div className="sidebar-nav navbar-collapse">
-     //        <ul className="nav" id="side-menu">
-     //          <li className="sidebar-search">
-     //            <div className="input-group custom-search-form">
-     //              <input type="text" className="form-control" placeholder="Search..." />
-     //              <span className="input-group-btn">
-     //                <button className="btn btn-default" type="button">
-     //                  <i className="fa fa-search" />
-     //                </button>
-     //              </span>
-     //            </div>
-                
-     //          </li>
-     //          <li>
-     //            <a href="index.html"><i className="fa fa-dashboard fa-fw" /> Dashboard</a>
-     //          </li>
-			  // <ProjectListSideBar/>
-     //          <li>
-     //            <a href="tables.html"><i className="fa fa-table fa-fw" /> Tables</a>
-     //          </li>
-     //          <li>
-     //            <a href="forms.html"><i className="fa fa-edit fa-fw" /> Forms</a>
-     //          </li>
-     //          <li>
-     //            <a href="#"><i className="fa fa-wrench fa-fw" /> UI Elements<span className="fa arrow" /></a>
-     //            <ul className="nav nav-second-level">
-     //              <li>
-     //                <a href="panels-wells.html">Panels and Wells</a>
-     //              </li>
-     //              <li>
-     //                <a href="buttons.html">Buttons</a>
-     //              </li>
-     //              <li>
-     //                <a href="notifications.html">Notifications</a>
-     //              </li>
-     //              <li>
-     //                <a href="typography.html">Typography</a>
-     //              </li>
-     //              <li>
-     //                <a href="icons.html"> Icons</a>
-     //              </li>
-     //              <li>
-     //                <a href="grid.html">Grid</a>
-     //              </li>
-     //            </ul>
-     //          </li>
-     //          <li>
-     //            <a href="#"><i className="fa fa-sitemap fa-fw" /> Multi-Level Dropdown<span className="fa arrow" /></a>
-     //            <ul className="nav nav-second-level">
-     //              <li>
-     //                <a href="#">Second Level Item</a>
-     //              </li>
-     //              <li>
-     //                <a href="#">Second Level Item</a>
-     //              </li>
-     //              <li>
-     //                <a href="#">Third Level <span className="fa arrow" /></a>
-     //                <ul className="nav nav-third-level">
-     //                  <li>
-     //                    <a href="#">Third Level Item</a>
-     //                  </li>
-     //                  <li>
-     //                    <a href="#">Third Level Item</a>
-     //                  </li>
-     //                  <li>
-     //                    <a href="#">Third Level Item</a>
-     //                  </li>
-     //                  <li>
-     //                    <a href="#">Third Level Item</a>
-     //                  </li>
-     //                </ul>
-     //              </li>
-     //            </ul>
-     //          </li>
-     //          <li>
-     //            <a href="#"><i className="fa fa-files-o fa-fw" /> Sample Pages<span className="fa arrow" /></a>
-     //            <ul className="nav nav-second-level">
-     //              <li>
-     //                <a href="blank.html">Blank Page</a>
-     //              </li>
-     //              <li>
-     //                <a href="login.html">Login Page</a>
-     //              </li>
-     //            </ul>
-     //          </li>
-     //        </ul>
-     //      </div>
-     //    </div>
 
     );
   }
@@ -490,6 +405,11 @@ var DashboardView = React.createClass({
 	setInterval(this.updateData, config.reload*1000); 
   }, 
 
+  componentWillReceiveProps: function(nextProps){
+  	this.componentDidMount();
+
+  },
+
   getInitialState: function() {
   
     return {component_count : {}};
@@ -521,6 +441,10 @@ var GridList = React.createClass({
 
   	var component; 
   	var centeralign = {margin: '0px auto'};
+	var white = {color: 'white'};
+
+  	var	bugzillaLink = '';
+	var	bugzillaLinkNobody = '';
 
     return (
     <div>
@@ -535,11 +459,25 @@ var GridList = React.createClass({
   		<strong style={centeralign}>{item.owner}</strong>
   		)
 
+		if (item.count!=0)
+		{
+			bugzillaLink = config.bugLinkUrl+item.count_bugs.join(',');
+		}
+		else
+			bugzillaLink = '';
+
+		if (item.count_nobody!=0)
+		{
+			bugzillaLinkNobody = config.bugLinkUrl+item.count_nobody_bugs.join(',');
+		}
+		else
+			bugzillaLinkNobody = '';
+		
     	return (
     		<Col xs={2} md={2}>
     			<Panel header={component} footer={owner} bsStyle='primary'>
-    			<p style={centeralign}><strong>{item.count} </strong>
-           			<Badge style={centeralign}>{item.count_nobody}</Badge>
+    			<p style={centeralign}><strong><a href={bugzillaLink} target='_blank'> {item.count}</a> </strong>
+           			<Badge style={centeralign}><a href={bugzillaLinkNobody} target='_blank' style={white}>{item.count_nobody}</a></Badge>
            		</p>
     			</Panel>
     		</Col>
@@ -602,6 +540,7 @@ var ProjectBreakdown = React.createClass({
 		    <PageHeader>Project</PageHeader>
 		    <Grid>
 		    {
+		    	<img src='http://www.sarkea.com.tw/images/pagemaster/underconstruction.jpg'/>
 		        // <Row className='show-grid'>
 		        //     <GridList data={aggregateBugCount(this.state.data)}/>
 		        // </Row>

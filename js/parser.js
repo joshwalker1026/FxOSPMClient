@@ -34,7 +34,9 @@ function aggregateBugCount(res) {
             'component': key,
             'owner': value,
             'count': 0,
-            'count_nobody': 0
+            'count_bugs': [],
+            'count_nobody': 0,
+            'count_nobody_bugs': [],
         };
 
         component_count_Array.push(component_item);
@@ -46,8 +48,11 @@ function aggregateBugCount(res) {
             for (var j = 0; j < component_count_Array.length; j++) {
                 if (res.bugs[i].component == component_count_Array[j].component) {
                     component_count_Array[j].count += 1;
-                    if (res.bugs[i].assigned_to == "nobody@mozilla.org")
+                    component_count_Array[j].count_bugs.push(res.bugs[i].id);
+                    if (res.bugs[i].assigned_to == "nobody@mozilla.org"){
                         component_count_Array[j].count_nobody += 1;
+                        component_count_Array[j].count_nobody_bugs.push(res.bugs[i].id);
+                    }
                     break;
                 }
             }
@@ -61,5 +66,6 @@ function aggregateBugCount(res) {
         }
     }
 
+    console.log(component_count_Array_trimed);
     return component_count_Array_trimed;
 }
