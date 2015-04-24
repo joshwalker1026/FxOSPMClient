@@ -502,8 +502,6 @@ var DashboardView = React.createClass({
   },
 
   render: function() {
-  	
-
     return (
 		<div id="page-wrapper">
 		    <PageHeader>Dashboard</PageHeader>
@@ -533,9 +531,13 @@ var GridList = React.createClass({
   		<h3 style={centeralign}>{item.component}</h3>
   		)
   		
+  		owner = (
+  		<strong style={centeralign}>{item.owner}</strong>
+  		)
+
     	return (
     		<Col xs={2} md={2}>
-    			<Panel header={component} footer={item.owner} bsStyle='info'>
+    			<Panel header={component} footer={owner} bsStyle='primary'>
     			<p style={centeralign}><strong>{item.count} </strong>
            			<Badge style={centeralign}>{item.count_nobody}</Badge>
            		</p>
@@ -554,13 +556,13 @@ var ProjectCreate = React.createClass({
 
   render: function() {
     return (
-      <div id="page-wrapper">
+      	<div id="page-wrapper">
             <div className="row">
                 <div className="col-lg-12">
                     <h1 className="page-header">Create New Project</h1>
                 </div>
             </div>
-            </div>
+        </div>
     );
   }
 });
@@ -596,21 +598,21 @@ var ProjectBreakdown = React.createClass({
 
   render: function() {
     return (
-      <div id="page-wrapper">
-            <div className="row">
-                <div className="col-lg-12">
-                    <h1 className="page-header">Project</h1>
-                </div>
-            </div>
-            </div>
+      	<div id="page-wrapper">
+		    <PageHeader>Project</PageHeader>
+		    <Grid>
+		    {
+		        // <Row className='show-grid'>
+		        //     <GridList data={aggregateBugCount(this.state.data)}/>
+		        // </Row>
+		        // 
+		    }
+		    </Grid>
+		</div>
     );
   }
 });
 
-// React.render(
-//     <App/>,
-//     document.body
-//     )
 
 var routes = (
   <Route name="app" path="/" handler={App}>
