@@ -555,9 +555,9 @@ var ProjectCreate = React.createClass({
   render: function() {
     return (
       <div id="page-wrapper">
-            <div class="row">
-                <div class="col-lg-12">
-                    <h1 class="page-header">Create New Project</h1>
+            <div className="row">
+                <div className="col-lg-12">
+                    <h1 className="page-header">Create New Project</h1>
                 </div>
             </div>
             </div>
@@ -597,9 +597,9 @@ var ProjectBreakdown = React.createClass({
   render: function() {
     return (
       <div id="page-wrapper">
-            <div class="row">
-                <div class="col-lg-12">
-                    <h1 class="page-header">Dashboard</h1>
+            <div className="row">
+                <div className="col-lg-12">
+                    <h1 className="page-header">Dashboard</h1>
                 </div>
             </div>
             </div>
