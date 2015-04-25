@@ -1,14 +1,3 @@
-//TODO: replace this with jison generated parser
-//
-$.assocArraySize = function(obj) {
-    // http://stackoverflow.com/a/6700/11236
-    var size = 0,
-        key;
-    for (key in obj) {
-        if (obj.hasOwnProperty(key)) size++;
-    }
-    return size;
-};
 
 function buildQueryUrl(url, args) {
     //TODO: parse and transform query to tastypie filters
@@ -18,11 +7,12 @@ function buildQueryUrl(url, args) {
     // console.log('arg_string: '+arg_string)
     queryUrl += arg_string;
     //var queryUrl = url + "?order_by=modified_on"
-    console.log('queryUrl: ' + queryUrl);
+    // console.log('queryUrl: ' + queryUrl);
     return queryUrl;
 }
 
 function aggregateBugCount(res) {
+
     var component_item = {};
     var component_count_Array = [];
     var component_count_Array_trimed = [];
@@ -57,15 +47,14 @@ function aggregateBugCount(res) {
                 }
             }
         };
-    }
+    
 
-    //Remove no bug components
-    for (var j = 0; j < component_count_Array.length; j++) {
-        if ((component_count_Array[j].count != 0) || (component_count_Array[j].count_nobody != 0)) {
-            component_count_Array_trimed.push(component_count_Array[j]);
+        //Remove no bug components
+        for (var j = 0; j < component_count_Array.length; j++) {
+            if ((component_count_Array[j].count != 0) || (component_count_Array[j].count_nobody != 0)) {
+                component_count_Array_trimed.push(component_count_Array[j]);
+            }
         }
     }
-
-    console.log(component_count_Array_trimed);
     return component_count_Array_trimed;
 }

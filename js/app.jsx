@@ -25,7 +25,7 @@ var Badge          = ReactBootstrap.Badge
 var App = React.createClass({
   render: function() {
     return (
-	    <div id="wrapper">
+	    <div>
 	        <nav className="navbar navbar-default navbar-static-top" role="navigation" style={{marginBottom: 0}}>
 	            <NavBar/>
 				<SideBar/>
@@ -299,15 +299,48 @@ var SideBar = React.createClass({
 
   handleSelect: function() {
   
-    setState({selected: 'project'})
+    setState({selected: 'dashboard'})
   },  
 
   render: function() {
+
+  	  // <Nav bsStyle='pills' stacked className="navbar-default sidebar" inverse toggleNavKey={0}>
+	  //   <NavItem eventKey={1} title='Dashboard' href='#/dashboard'><Glyphicon glyph='dashboard'/> Dashboard </NavItem>
+	  //   <NavItem eventKey={2} title='Projects' href='#/project'><Glyphicon glyph='th-large'/> Projects </NavItem>
+	  // </Nav>
+	 
     return (
-	  <Nav bsStyle='pills' stacked className="navbar-default sidebar">
-	    <NavItem eventKey={1} title='Dashboard' href='./index.html#'><Glyphicon glyph='dashboard'/> Dashboard </NavItem>
-	    {/*<NavItem eventKey={2} title='Projects' href='./index.html#/project'><Glyphicon glyph='th-large'/> Projects </NavItem>*/}
-	  </Nav>
+
+
+	  <div className="navbar-default sidebar" role="navigation">
+          <div className="sidebar-nav navbar-collapse">
+            <ul className="nav" id="side-menu">
+              <li className="sidebar-search">
+                <div className="input-group custom-search-form">
+                  <input type="text" className="form-control" placeholder="Search..." />
+                  <span className="input-group-btn">
+                    <button className="btn btn-default" type="button">
+                      <i className="fa fa-search" />
+                    </button>
+                  </span>
+                </div>
+                {/* input-group */}
+                
+              </li>
+              <li>
+                <a href="#/dashboard"><i className="fa fa-dashboard fa-fw" /> Dashboard</a>
+              </li>
+              <li>
+                <a href="#"><i className="fa fa-bar-chart-o fa-fw" /> Project<span className="fa arrow" /></a>
+                <ul className="nav nav-second-level">
+                  <li>
+                    <a href="flot.html">Create New Project</a>
+                  </li>
+                </ul>
+              </li>        
+            </ul>
+          </div>
+        </div>
 
     );
   }
@@ -349,35 +382,12 @@ var SearchableRemoteDataMixin = {
   },
 
   getInitialState: function() {
-  
     return {data: this.loading};
   },
   
-  handleSearch: function(query) { 
-    this.loadRemoteData(this.buildURL(query));
-    this.setState({query: query, data: this.loading});
-    //TODO: two way data binding?
-    //console.log("handle search: " + query)
-    this.refs.searchform.forceUpdateInput(query);
-    window.history.pushState({}, "MozTrap", document.URL.split("search/")[0] + "search/" + encodeURI(query));
-  },
-
-  handleAddFilter: function(additionalQuery, removeRegex){
-    var newQuery = this.state.query.replace(removeRegex, "")
-    console.log(newQuery)
-    this.handleSearch(newQuery + additionalQuery);
-  },
-
-  /*
-  componentWillReceiveProps: function() {
-    this.setState({data: this.loading})
-    this.loadRemoteData(this.buildURL(this.state.query));
-  },
-  */
-
 }
 
-var DashboardView = React.createClass({
+var DashboardPage = React.createClass({
   mixins: [SearchableRemoteDataMixin],
   bugapi_url: config.bugBaseUrl + "/bug",
   defaultArgs : [],
@@ -396,29 +406,24 @@ var DashboardView = React.createClass({
 
   componentDidMount: function() {
   	//TODO: need to change to acquire search criteria
-  	this.defaultArgs.push(encodeURIComponent('product') + "=" + encodeURIComponent('Firefox OS'));
-	this.defaultArgs.push(encodeURIComponent(config.flag) + "=" + encodeURIComponent(config.defaultRelease+ '+'));
-	this.defaultArgs.push(encodeURIComponent('status') + "=" + encodeURIComponent('__open__'));
-	this.defaultArgs.push(encodeURIComponent('include_fields') + "=" + encodeURIComponent('id, component, assigned_to, creation_time'));
-
+   	this.setState({data: this.loading});
     this.updateData();
 	setInterval(this.updateData, config.reload*1000); 
   }, 
 
-  componentWillReceiveProps: function(nextProps){
-  	this.componentDidMount();
-
-  },
-
   getInitialState: function() {
-  
-    return {component_count : {}};
+  	// TODO: Get initial saved query
+	this.defaultArgs.length = 0; 
+  	this.defaultArgs.push(encodeURIComponent('product') + "=" + encodeURIComponent('Firefox OS'));
+	this.defaultArgs.push(encodeURIComponent(config.flag) + "=" + encodeURIComponent(config.defaultRelease+ '+'));
+	this.defaultArgs.push(encodeURIComponent('status') + "=" + encodeURIComponent('__open__'));
+	this.defaultArgs.push(encodeURIComponent('include_fields') + "=" + encodeURIComponent('id, component, assigned_to, creation_time'));
+ 
+    return {component_count : []}; // Not used 
   },
 
   updateData: function(){
-
-  	this.loadRemoteData(this.buildURL(this.defaultArgs)).then(function () {
-	})
+  	this.loadRemoteData(this.buildURL(this.defaultArgs));
   },
 
   render: function() {
@@ -472,7 +477,7 @@ var GridList = React.createClass({
 		}
 		else
 			bugzillaLinkNobody = '';
-		
+
     	return (
     		<Col xs={2} md={2}>
     			<Panel header={component} footer={owner} bsStyle='primary'>
@@ -490,7 +495,7 @@ var GridList = React.createClass({
 });
 
 
-var ProjectCreate = React.createClass({
+var ProjectCreatePage = React.createClass({
 
   render: function() {
     return (
@@ -506,7 +511,7 @@ var ProjectCreate = React.createClass({
 });
 
 
-var ProjectBreakdown = React.createClass({
+var ProjectPage = React.createClass({
   mixins: [SearchableRemoteDataMixin],
   // bugapi_url: config.bugBaseUrl + "/api/v1/project/",
   prjapi_url: config.prjBaseUrl + "/api/v1/project/",
@@ -518,34 +523,14 @@ var ProjectBreakdown = React.createClass({
              );
   },
 
-  handleQueueUpdate: function(e) {
-    if (e.target.checked){
-      var newState = {};
-      newState['checked'] = this.state['checked'].concat(e.target.value);
-      //console.log('will set state')
-      this.setState(newState);
-    }
-    else {
-      this.state['checked'].splice(this.state['checked'].indexOf(e.target.value), 1);
-      var newState = {};
-      newState['checked'] = this.state['checked'];
-      //console.log('will set state')
-      this.setState(newState);
-    }
-  },
+
 
   render: function() {
     return (
       	<div id="page-wrapper">
 		    <PageHeader>Project</PageHeader>
 		    <Grid>
-		    {
-		    	<img src='http://www.sarkea.com.tw/images/pagemaster/underconstruction.jpg'/>
-		        // <Row className='show-grid'>
-		        //     <GridList data={aggregateBugCount(this.state.data)}/>
-		        // </Row>
-		        // 
-		    }
+		    
 		    </Grid>
 		</div>
     );
@@ -555,18 +540,18 @@ var ProjectBreakdown = React.createClass({
 
 var routes = (
   <Route name="app" path="/" handler={App}>
-    <DefaultRoute handler={DashboardView}/>
-    <Route name="dashboard"          path="/dashboard" handler={DashboardView}/>
-    <Route name="project"            path="/project" handler={ProjectBreakdown}/>
-    <Route name="project_create"     path="/project/create" handler={ProjectCreate}/>
-    <Route name="caseversion_search" path="/caseversion/search/:query" handler={ProjectBreakdown}/>
+    <DefaultRoute handler={DashboardPage}/>
+    <Route name="dashboard"          path="/dashboard" handler={DashboardPage}/>
+    <Route name="project"            path="/project" handler={ProjectPage}/>
+    <Route name="project_create"     path="/project/create" handler={ProjectCreatePage}/>
+    <Route name="caseversion_search" path="/caseversion/search/:query" handler={ProjectPage}/>
     <Redirect                        from="/search/:query"  to="/caseversion/search/:query" />
-    <Route name="suites_noid"        path="/suite/" handler={ProjectBreakdown}/>
+    <Route name="suites_noid"        path="/suite/" handler={ProjectPage}/>
     <Redirect                        from="/suite"  to="/suite/" />
-    <Route name="suite_search"       path="/suite/search/:query" handler={ProjectBreakdown}/>
+    <Route name="suite_search"       path="/suite/search/:query" handler={ProjectPage}/>
     {/* <Route name="suite"              path="/suite/:id" handler={AddToSuite} />
     <Route name="settings"           path="/settings" handler={Settings} />*/}
-    <NotFoundRoute handler={ProjectBreakdown}/> 
+    <NotFoundRoute handler={ProjectPage}/> 
   </Route>
 );
 
