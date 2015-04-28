@@ -426,11 +426,21 @@ var DashboardPage = React.createClass({
   	this.loadRemoteData(this.buildURL(this.defaultArgs));
   },
 
+
+ 
+
+
   render: function() {
+  	$("#js-example-basic-multiple").select2();
+
     return (
 		<div id="page-wrapper">
 		    <PageHeader>Dashboard</PageHeader>
 		    <Grid>
+		    <ul className="nav navbar-top-links navbar-right">
+		        <NavMessage/>
+	        </ul>
+
 		        <Row className='show-grid'>
 		            <GridList data={aggregateBugCount(this.state.data)}/>
 		        </Row>
