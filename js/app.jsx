@@ -302,19 +302,17 @@ var SideBar = React.createClass({
     setState({selected: 'dashboard'})
   },  
 
-  render: function() {
+  componentDidMount: function() {
 
-  	  // <Nav bsStyle='pills' stacked className="navbar-default sidebar" inverse toggleNavKey={0}>
-	  //   <NavItem eventKey={1} title='Dashboard' href='#/dashboard'><Glyphicon glyph='dashboard'/> Dashboard </NavItem>
-	  //   <NavItem eventKey={2} title='Projects' href='#/project'><Glyphicon glyph='th-large'/> Projects </NavItem>
-	  // </Nav>
-	 
+    // Initialize collapse
+    $(React.findDOMNode(this.refs.sidemenu)).metisMenu();
+  },
+
+  render: function() {	 
     return (
-
-
 	  <div className="navbar-default sidebar" role="navigation">
           <div className="sidebar-nav navbar-collapse">
-            <ul className="nav" id="side-menu">
+            <ul className="nav" ref="sidemenu">
               <li className="sidebar-search">
                 <div className="input-group custom-search-form">
                   <input type="text" className="form-control" placeholder="Search..." />
@@ -328,16 +326,25 @@ var SideBar = React.createClass({
                 
               </li>
               <li>
-                <a href="#/dashboard"><i className="fa fa-dashboard fa-fw" /> Dashboard</a>
+                <a href="./index.html#/dashboard"><i className="fa fa-dashboard fa-fw" /> Dashboard </a>
               </li>
               <li>
-                <a href="#"><i className="fa fa-bar-chart-o fa-fw" /> Project<span className="fa arrow" /></a>
-                <ul className="nav nav-second-level">
+                <a href="#"><i className="fa fa-bar-chart-o fa-fw"/> Project <span className="fa arrow" /></a>
+                <ul className="nav nav-second-level collapse" id="collapseProject">
                   <li>
-                    <a href="flot.html">Create New Project</a>
+                    <a href="./index.html#/project" >Create New Project</a>
+                  </li>
+                  <li>
+                    <a href="./index.html#/project" >Create New Project</a>
+                  </li>
+                  <li>
+                    <a href="./index.html#/project" >Create New Project</a>
+                  </li>
+                  <li>
+                    <a href="./index.html#/project" >Create New Project</a>
                   </li>
                 </ul>
-              </li>        
+              </li>  
             </ul>
           </div>
         </div>
@@ -392,60 +399,92 @@ var DashboardPage = React.createClass({
   bugapi_url: config.bugBaseUrl + "/bug",
   defaultArgs : [],
 
-  buildURL: function(args) {
-
-
-      return (buildQueryUrl(this.bugapi_url, args)
+  buildURL: function() {
+	this.defaultArgs.length = 0; 
+  	this.defaultArgs.push(encodeURIComponent('product') + "=" + encodeURIComponent('Firefox OS'));
+	this.defaultArgs.push(encodeURIComponent(config.flag) + "=" + encodeURIComponent(this.state.selectedRel+ '+'));
+	this.defaultArgs.push(encodeURIComponent('status') + "=" + encodeURIComponent('__open__'));
+	this.defaultArgs.push(encodeURIComponent('include_fields') + "=" + encodeURIComponent('id, component, assigned_to, creation_time'));
+ 
+      return (buildQueryUrl(this.bugapi_url, this.defaultArgs)
              );
   },
 
- //  refreshData: function(args) {
-
-	// aggregateBugCount(this.state.data);
- //  },
-
   componentDidMount: function() {
   	//TODO: need to change to acquire search criteria
-   	this.setState({data: this.loading});
+
+  	// Initialize collapse
     this.updateData();
 	setInterval(this.updateData, config.reload*1000); 
   }, 
 
   getInitialState: function() {
   	// TODO: Get initial saved query
-	this.defaultArgs.length = 0; 
-  	this.defaultArgs.push(encodeURIComponent('product') + "=" + encodeURIComponent('Firefox OS'));
-	this.defaultArgs.push(encodeURIComponent(config.flag) + "=" + encodeURIComponent(config.defaultRelease+ '+'));
-	this.defaultArgs.push(encodeURIComponent('status') + "=" + encodeURIComponent('__open__'));
-	this.defaultArgs.push(encodeURIComponent('include_fields') + "=" + encodeURIComponent('id, component, assigned_to, creation_time'));
- 
-    return {component_count : []}; // Not used 
+	
+    return 
+    ({
+    	component_count : [],
+   		selectedRel : config.defaultRelease,
+   	}); 
   },
 
   updateData: function(){
-  	this.loadRemoteData(this.buildURL(this.defaultArgs));
+  	this.loadRemoteData(this.buildURL());
   },
 
+  changeReleaseHandler: function(release){
 
- 
+  	this.setState({selectedRel:release}, function(){
+  		this.loadRemoteData(this.buildURL());
+  	});
 
+
+
+  	// this.loadRemoteData(this.buildURL());
+  },
 
   render: function() {
-  	$("#js-example-basic-multiple").select2();
-
     return (
 		<div id="page-wrapper">
 		    <PageHeader>Dashboard</PageHeader>
-		    <Grid>
-		    <ul className="nav navbar-top-links navbar-right">
-		        <NavMessage/>
-	        </ul>
+			<div className="row show-grid">
+			    <div className="col-xs-6 col-sm-3">
+	                <DashboardPage_ReleaseSelector selectedRel={this.state.selectedRel} onChange={this.changeReleaseHandler} />
+	            </div>
+	 		</div>
+	 		<div className="row show-grid">
+				<div className="col-xs-12 col-sm-12 col-lg-12">
+			        <div className="row show-grid">
+			            <GridList data={aggregateBugCount(this.state.data)}/>
+			        </div>
+				</div>
+			</div>	
+		</div>	
+    );
+  }
+});
 
-		        <Row className='show-grid'>
-		            <GridList data={aggregateBugCount(this.state.data)}/>
-		        </Row>
-		    </Grid>
-		</div>
+var DashboardPage_ReleaseSelector = React.createClass({
+
+ componentDidMount: function() {
+  	//TODO: need to change to acquire search criteria
+  },
+
+ handleChange: function(event) {
+    this.props.onChange(event.target.value);
+
+  },
+
+ render: function() {
+
+    return (
+	<select className="form-control" name="sleectedRelease" onChange={this.handleChange} value={this.props.selectedRel}>
+	    {
+	    config.releases.map(function(item) {
+	    	return (<option value={item} >{item}</option>)
+	    	})
+	    }
+ 	</select> 
     );
   }
 });
